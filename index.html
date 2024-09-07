@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>טופס העברת רכב איגום - מס הכנסה ומיסוי מקרקעין</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e6f7ff; /* רקע בהיר תכלת */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* התחלה מלמעלה */
+            min-height: 100vh; /* גובה מינימלי של המסך */
+            padding-top: 20px; /* מרווח עליון */
+        }
+        form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px; /* התאמה לנייד */
+            width: 100%;
+            margin: 0 15px; /* רווח קטן מכל צד */
+            text-align: right; /* יישור כל האלמנטים לימין */
+        }
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 1.8em;
+            color: #004d66; /* צבע טורקיז כהה */
+        }
+        h2 {
+            font-size: 1em;
+            color: #007a99; /* צבע טורקיז בהיר */
+        }
+        label {
+            font-size: 1em;
+            color: #333;
+            margin-bottom: 5px;
+            display: block;
+        }
+        .note {
+            font-size: 0.9em;
+            color: #999; /* צבע הכוכבית וההערה */
+            margin-bottom: 15px;
+            display: block;
+        }
+        input[type="text"], input[type="tel"], select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            font-size: 1em;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+            text-align: right; /* יישור לימין */
+            box-sizing: border-box;
+        }
+        input[type="text"]:focus, input[type="tel"]:focus, select:focus, textarea:focus {
+            border: 1px solid #00b3b3; /* מסגרת טורקיז */
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #00b3b3; /* צבע טורקיז */
+            color: white;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #008080; /* צבע טורקיז כהה יותר */
+        }
+        #carConditionDetails {
+            display: none; /* מוסתר כאשר מצב הרכב תקין */
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <form id="carTransferForm">
+        <h1>טופס העברת רכב איגום - מס הכנסה ומיסוי מקרקעין</h1>
+        <h2>אגף רכש נכסים ולוגיסטיקה</h2>
+
+        <label for="giverName">שם מוסר הרכב: *</label>
+        <input type="text" id="giverName" name="giverName" required>
+        <span class="note">* במידה ולקחת את הרכב מיחידה ציין את שם היחידה</span>
+
+        <label for="receiverName">שם מקבל הרכב (הנוהג ברכב):</label>
+        <input type="text" id="receiverName" name="receiverName" required>
+
+        <label for="phoneNumber">מספר טלפון מקבל הרכב:</label>
+        <input type="tel" id="phoneNumber" name="phoneNumber" required pattern="[0-9]{10}" placeholder="0501234567">
+
+        <label for="licenseNumber">מספר רישוי:</label>
+        <input type="text" id="licenseNumber" name="licenseNumber" required>
+
+        <label for="carCondition">מצב חיצוני:</label>
+        <select id="carCondition" name="carCondition" required onchange="toggleDetails()">
+            <option value="תקין">תקין</option>
+            <option value="לא תקין">לא תקין</option>
+        </select>
+
+        <!-- שדה להוספת פירוט על מצב לא תקין -->
+        <div id="carConditionDetails" class="hidden">
+            <label for="carDetails">פירוט:</label>
+            <textarea id="carDetails" name="carDetails" rows="4" cols="40"></textarea>
+        </div>
+
+        <button type="submit">שלח</button>
+    </form>
+
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@2/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function(){
+            emailjs.init("7lz9vfM8_txTx_dvP"); // זהו ה-USER_ID שלך
+        })();
+
+        function toggleDetails() {
+            var condition = document.getElementById("carCondition").value;
+            var detailsDiv = document.getElementById("carConditionDetails");
+            if (condition === "לא תקין") {
+                detailsDiv.style.display = "block"; // הצג את השדה אם "לא תקין"
+            } else {
+                detailsDiv.style.display = "none"; // הסתר את השדה אם "תקין"
+            }
+        }
+
+        document.getElementById('carTransferForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // שליחת הנתונים ל-EmailJS
+            emailjs.sendForm('service_3r01o5a', 'template_rkpptac', this)
+                .then(function() {
+                    alert('הטופס נשלח בהצלחה!');
+                }, function(error) {
+                    console.log(error);
+                    alert('שגיאה בשליחת הטופס ל-EmailJS: ' + JSON.stringify(error));
+                });
+        });
+    </script>
+
+</body>
+</html>
